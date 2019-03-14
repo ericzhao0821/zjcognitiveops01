@@ -1,64 +1,78 @@
 {
-  "moduleContent": {
-    "$edgeAgent": {
-      "properties.desired": {
-        "schemaVersion": "1.0",
-        "runtime": {
-          "type": "docker",
-          "settings": {
-            "minDockerVersion": "v1.25",
-            "loggingOptions": "",
-            "registryCredentials": {
-              "registryName": {
-                "username": "$CONTAINER_REGISTRY_USERNAME",
-                "password": "$CONTAINER_REGISTRY_PASSWORD",
-                "address": "$CONTAINER_REGISTRY_ADDRESS"
-              }
-            }
-          }
-        },
-        "systemModules": {
-          "edgeAgent": {
-            "type": "docker",
-            "settings": {
-              "image": "mcr.microsoft.com/azureiotedge-agent:1.0",
-              "createOptions": ""
-            }
-          },
-          "edgeHub": {
-            "type": "docker",
-            "status": "running",
-            "restartPolicy": "always",
-            "settings": {
-              "image": "mcr.microsoft.com/azureiotedge-hub:1.0",
-              "createOptions": ""
-            },
-            "env": {
-                "OptimizeForPerformance": {
-                  "value": "false"
+    "modulesContent": {
+        "$edgeAgent": {
+            "properties.desired": {
+                "schemaVersion": "1.0",
+                "runtime": {
+                    "type": "docker",
+                    "settings": {
+                        "loggingOptions": "",
+                        "minDockerVersion": "v1.25",
+                        "registryCredentials": {
+                            "zjregistry01": {
+                                "address": "zjregistry01.azurecr.io",
+                                "password": "NelhejXggstEwx0pRIveCIp/5IPJDRsY",
+                                "username": "zjregistry01"
+                            }
+                        }
+                    }
+                },
+                "systemModules": {
+                    "edgeAgent": {
+                        "type": "docker",
+                        "settings": {
+                            "image": "mcr.microsoft.com/azureiotedge-agent:1.0",
+                            "createOptions": ""
+                        }
+                    },
+                    "edgeHub": {
+                        "type": "docker",
+                        "settings": {
+                            "image": "mcr.microsoft.com/azureiotedge-hub:1.0",
+                            "createOptions": "{\"HostConfig\":{\"PortBindings\":{\"8883/tcp\":[{\"HostPort\":\"8883\"}],\"443/tcp\":[{\"HostPort\":\"443\"}],\"5671/tcp\":[{\"HostPort\":\"5671\"}]}}}"
+                        },
+                        "status": "running",
+                        "restartPolicy": "always"
+                    }
+                },
+                "modules": {
+                    "LanguageDetectionContainerAzureCognitiveServices": {
+                        "type": "docker",
+                        "settings": {
+                            "image": "mcr.microsoft.com/azure-cognitive-services/language",
+                            "createOptions": "{\"HostConfig\":{\"PortBindings\":{\"5000/tcp\":[{\"HostPort\":\"5000\"}]}}}"
+                        },
+                        "env": {
+                            "Eula": {
+                                "value": "accept"
+                            },
+                            "Billing": {
+                                "value": "https://southeastasia.api.cognitive.microsoft.com/text/analytics/v2.0"
+                            },
+                            "ApiKey": {
+                                "value": "7abff690a40e45ac9bed0d721acaa479"
+                            }
+                        },
+                        "status": "running",
+                        "restartPolicy": "always",
+                        "version": "1.0"
+                    }
                 }
             }
-          }
         },
-        "modules": {
-          "text-analytics": {
-            "version": "1.0",
-            "type": "docker",
-            "status": "running",
-            "restartPolicy": "always",
-            "settings": {
-              "image": "mcr.microsoft.com/azure-cognitive-services/language:latest",
-              "createOptions": "Eula=accept Billing=https://southeastasia.api.cognitive.microsoft.com/text/analytics/v2.0 ApiKey=7abff690a40e45ac9bed0d721acaa479"
+        "$edgeHub": {
+            "properties.desired": {
+                "schemaVersion": "1.0",
+                "routes": {
+                    "route": "FROM /messages/* INTO $upstream"
+                },
+                "storeAndForwardConfiguration": {
+                    "timeToLiveSecs": 7200
+                }
             }
-          }
+        },
+        "LanguageDetectionContainerAzureCognitiveServices": {
+            "properties.desired": {}
         }
-      }
-    },
-    "$edgeHub": {
-      "properties.desired": {
-        "schemaVersion": "1.0",
-        "routes": {}
-      }
     }
-  }
 }
